@@ -1,8 +1,8 @@
-export interface Board {
+export interface Column {
   id: number;
   title: string;
   ownerId: number;
-  deletedAt: Date | null;
+  order: number;
   createdAt: Date;
   updatedAt: Date;
 }

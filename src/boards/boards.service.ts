@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { Injectable, NotFoundException, Req } from '@nestjs/common';
 import { Board } from './interfaces/boards.interface';
 // import { CreateBoardDto } from './dto/createBoard.dto';
@@ -6,6 +5,7 @@ import { PrismaService } from 'src/prisma.service';
 import { CreateBoardDto } from './dto/createBoard.dto';
 import type { Request } from 'express';
 import { Role } from 'src/generated/prisma/browser';
+import { CreateColumnDto } from './dto/createColumn.dto';
 
 @Injectable()
 export class BoardsService {
@@ -45,8 +45,15 @@ export class BoardsService {
       where: { id },
       include: {
         columns: {
+          orderBy: {
+            order: 'asc',
+          },
           include: {
-            tasks: true,
+            tasks: {
+              orderBy: {
+                position: 'asc',
+              },
+            },
           },
         },
       },
@@ -142,5 +149,21 @@ export class BoardsService {
     });
 
     return `Board with ID ${id} deleted successfully`;
+  }
+
+  async createColumn(createColumnDto: CreateColumnDto, boardId: number) {
+    console.log('BoardsService - createColumn - Board ID:', boardId);
+    const existingColumnsInBoardLength = await this.prisma.column.count({
+      where: { boardId },
+    });
+    return this.prisma.column.create({
+      data: {
+        title: createColumnDto.title,
+        boardId: boardId,
+        order: existingColumnsInBoardLength + 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    });
   }
 }
