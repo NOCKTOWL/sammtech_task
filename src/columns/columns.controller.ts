@@ -11,7 +11,7 @@ import { AuthGuard } from 'src/guards/auth/auth.guard';
 
 @UseGuards(AuthGuard)
 @ApiBearerAuth()
-@ApiTags('columns')
+@ApiTags('Columns')
 @Controller('columns')
 export class ColumnsController {
   constructor(private readonly columnsService: ColumnsService) {}

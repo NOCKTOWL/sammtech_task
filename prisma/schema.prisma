@@ -52,7 +52,7 @@ model Task {
 
   createdById  Int
   creator      User     @relation("TaskCreator", fields: [createdById], references: [id])
-  assignedTo   User?    @relation("TaskAssignee", fields: [assignedId], references: [id])
+  assignee   User?    @relation("TaskAssignee", fields: [assignedId], references: [id])
 
   labels TaskLabel[]
 

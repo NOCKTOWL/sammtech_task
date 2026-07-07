@@ -34,7 +34,7 @@ import { CreateColumnDto } from './dto/createColumn.dto';
 
 @UseGuards(AuthGuard)
 @ApiBearerAuth()
-@ApiTags('boards')
+@ApiTags('Boards')
 @Controller('boards')
 export class BoardsController {
   constructor(private readonly boardsService: BoardsService) {}

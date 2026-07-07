@@ -299,7 +299,7 @@ export type UserCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   createdTasks?: Prisma.TaskCreateNestedManyWithoutCreatorInput
-  assignedTasks?: Prisma.TaskCreateNestedManyWithoutAssignedToInput
+  assignedTasks?: Prisma.TaskCreateNestedManyWithoutAssigneeInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -311,7 +311,7 @@ export type UserUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   createdTasks?: Prisma.TaskUncheckedCreateNestedManyWithoutCreatorInput
-  assignedTasks?: Prisma.TaskUncheckedCreateNestedManyWithoutAssignedToInput
+  assignedTasks?: Prisma.TaskUncheckedCreateNestedManyWithoutAssigneeInput
 }
 
 export type UserUpdateInput = {
@@ -322,7 +322,7 @@ export type UserUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdTasks?: Prisma.TaskUpdateManyWithoutCreatorNestedInput
-  assignedTasks?: Prisma.TaskUpdateManyWithoutAssignedToNestedInput
+  assignedTasks?: Prisma.TaskUpdateManyWithoutAssigneeNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -334,7 +334,7 @@ export type UserUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdTasks?: Prisma.TaskUncheckedUpdateManyWithoutCreatorNestedInput
-  assignedTasks?: Prisma.TaskUncheckedUpdateManyWithoutAssignedToNestedInput
+  assignedTasks?: Prisma.TaskUncheckedUpdateManyWithoutAssigneeNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -471,7 +471,7 @@ export type UserCreateWithoutCreatedTasksInput = {
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
-  assignedTasks?: Prisma.TaskCreateNestedManyWithoutAssignedToInput
+  assignedTasks?: Prisma.TaskCreateNestedManyWithoutAssigneeInput
 }
 
 export type UserUncheckedCreateWithoutCreatedTasksInput = {
@@ -482,7 +482,7 @@ export type UserUncheckedCreateWithoutCreatedTasksInput = {
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
-  assignedTasks?: Prisma.TaskUncheckedCreateNestedManyWithoutAssignedToInput
+  assignedTasks?: Prisma.TaskUncheckedCreateNestedManyWithoutAssigneeInput
 }
 
 export type UserCreateOrConnectWithoutCreatedTasksInput = {
@@ -534,7 +534,7 @@ export type UserUpdateWithoutCreatedTasksInput = {
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  assignedTasks?: Prisma.TaskUpdateManyWithoutAssignedToNestedInput
+  assignedTasks?: Prisma.TaskUpdateManyWithoutAssigneeNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCreatedTasksInput = {
@@ -545,7 +545,7 @@ export type UserUncheckedUpdateWithoutCreatedTasksInput = {
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  assignedTasks?: Prisma.TaskUncheckedUpdateManyWithoutAssignedToNestedInput
+  assignedTasks?: Prisma.TaskUncheckedUpdateManyWithoutAssigneeNestedInput
 }
 
 export type UserUpsertWithoutAssignedTasksInput = {

@@ -1,10 +1,11 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { RegisteredUser } from './interfaces/register.interface';
 import { AuthService } from './auth.service';
 import { LoggedInUser } from './interfaces/login.interface';
 import { LoginUserDto } from './dto/login-user.dto';
 import { ApiOperation, ApiResponse, ApiCreatedResponse } from '@nestjs/swagger';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 
 @Controller('auth')
 export class AuthController {
@@ -25,6 +26,13 @@ export class AuthController {
   @ApiOperation({ summary: 'Login a user and return a JWT token' })
   @ApiResponse({ status: 200, description: 'User logged in successfully' })
   @Post('/login')
+  @UseGuards(ThrottlerGuard)
+  @Throttle({
+    default: {
+      ttl: 60000,
+      limit: 5,
+    },
+  })
   async loginUser(@Body() loginUserDto: LoginUserDto): Promise<LoggedInUser> {
     return this.authService.loginUser(loginUserDto);
   }
