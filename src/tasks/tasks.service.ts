@@ -1,7 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { Task } from './interfaces/task.interface';
-import { CreateTaskDto } from './dto/createTask.dto';
+import { UpdateTaskPositionDto } from './dto/updateTaskPosition.dto';
+import { UpdateTaskDto } from './dto/updateTask.dto';
 
 @Injectable()
 export class TasksService {
@@ -41,27 +42,70 @@ export class TasksService {
   }
 
   // [POST] CREATE NEW TASK
-  async create(taskData: CreateTaskDto, userId: number): Promise<Task> {
-    const newTask = await this.prisma.task.create({
-      data: {
-        ...taskData,
-        createdById: userId,
-        deletedAt: null,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    });
-    return newTask;
-  }
+  // async create(taskData: CreateTaskDto, userId: number): Promise<Task> {
+  //   const newTask = await this.prisma.task.create({
+  //     data: {
+  //       ...taskData,
+  //       createdById: userId,
+  //       deletedAt: null,
+  //       createdAt: new Date(),
+  //       updatedAt: new Date(),
+  //     },
+  //   });
+  //   return newTask;
+  // }
 
-  // [PUT] UPDATE EXISTING TASK
-  async update(id: number, updatedTask: Partial<Task>): Promise<Task> {
+  // [PATCH] UPDATE EXISTING TASK
+  async update(id: number, updatedTask: UpdateTaskDto): Promise<Task> {
     const task = await this.prisma.task.findUnique({
       where: { id },
     });
 
     if (!task) {
       throw new NotFoundException(`Task with ID ${id} not found`);
+    }
+
+    const updatedTaskData = {
+      ...task,
+      ...updatedTask,
+      updatedAt: new Date(),
+    };
+
+    const updatedTaskRecord = await this.prisma.task.update({
+      where: { id },
+      data: updatedTaskData,
+    });
+
+    return updatedTaskRecord;
+  }
+
+  async updatePosition(
+    id: number,
+    updatedTask: UpdateTaskPositionDto,
+  ): Promise<Task> {
+    const task = await this.prisma.task.findUnique({
+      where: { id },
+    });
+
+    if (!task) {
+      throw new NotFoundException(`Task with ID ${id} not found`);
+    }
+
+    const existingTaskInPosition = await this.prisma.task.findFirst({
+      where: {
+        position: updatedTask.position,
+        columnId: task.columnId,
+      },
+    });
+
+    if (existingTaskInPosition && existingTaskInPosition.id !== id) {
+      await this.prisma.task.update({
+        where: { id: existingTaskInPosition.id },
+        data: {
+          position: existingTaskInPosition.position + 1,
+          updatedAt: new Date(),
+        },
+      });
     }
 
     const updatedTaskData = {

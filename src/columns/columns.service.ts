@@ -1,13 +1,46 @@
 /* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
+import { CreateTaskDto } from 'src/tasks/dto/createTask.dto';
 
 @Injectable()
 export class ColumnsService {
   constructor(private prisma: PrismaService) {}
 
-  getColumns(): string {
-    return ['Column 1', 'Column 2', 'Column 3'].join(', ');
+  // getColumns(): string {
+  //   return ['Column 1', 'Column 2', 'Column 3'].join(', ');
+  // }
+
+  async createTaskInColumn(
+    columnId: number,
+    taskData: CreateTaskDto,
+    userId: number,
+  ): Promise<string> {
+    const column = await this.prisma.column.findUnique({
+      where: { id: columnId },
+    });
+
+    if (!column) {
+      throw new Error(`Column with ID ${columnId} not found`);
+    }
+
+    const existingTaskCount = await this.prisma.task.count({
+      where: { columnId },
+    });
+
+    const newTask = await this.prisma.task.create({
+      data: {
+        ...taskData,
+        columnId,
+        position: existingTaskCount + 1,
+        createdById: userId,
+        deletedAt: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    });
+
+    return `Task '${newTask.title}' created in column '${column.title}'`;
   }
 
   async update(

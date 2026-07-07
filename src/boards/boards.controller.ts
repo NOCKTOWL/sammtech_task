@@ -6,6 +6,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Post,
   Req,
   UseGuards,
@@ -54,7 +55,7 @@ export class BoardsController {
   @ApiNotFoundResponse({ description: 'Board not found' })
   @UseGuards(BoardOwnerGuard, RolesGuard)
   @Roles(Role.BOARD_OWNER, Role.USER)
-  getBoardById(@Param('id') id: number): Promise<Board> {
+  getBoardById(@Param('id', ParseIntPipe) id: number): Promise<Board> {
     return this.boardsService.findOne(id);
   }
 
@@ -77,7 +78,7 @@ export class BoardsController {
   @ApiForbiddenResponse({ description: 'Forbidden' })
   @Roles(Role.BOARD_OWNER)
   @Delete(':id')
-  deleteBoard(@Param('id') id: string): Promise<string> {
+  deleteBoard(@Param('id', ParseIntPipe) id: number): Promise<string> {
     return this.boardsService.delete(id);
   }
 
@@ -90,7 +91,7 @@ export class BoardsController {
   @Post(':id/columns')
   createColumn(
     @Body() createColumnDto: CreateColumnDto,
-    @Param('id') boardId: number,
+    @Param('id', ParseIntPipe) boardId: number,
   ) {
     console.log('BoardsController - createColumn - Board ID:', boardId);
     return this.boardsService.createColumn(createColumnDto, boardId);

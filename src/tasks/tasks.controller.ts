@@ -8,6 +8,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Put,
@@ -25,6 +26,8 @@ import {
   ApiBearerAuth,
   ApiForbiddenResponse,
 } from '@nestjs/swagger';
+import { UpdateTaskPositionDto } from './dto/updateTaskPosition.dto';
+import { UpdateTaskDto } from './dto/updateTask.dto';
 
 @UseGuards(AuthGuard)
 @ApiBearerAuth()
@@ -54,15 +57,15 @@ export class TasksController {
   }
 
   // [POST] CREATE NEW TASK
-  @ApiOperation({ summary: 'Create a new task' })
-  @ApiOkResponse({
-    description: 'Successfully created a new task',
-  })
-  @Post()
-  createTask(@Body() body: CreateTaskDto, @Req() req: Request): Promise<Task> {
-    const userId = req['user']?.id;
-    return this.tasksService.create(body, userId);
-  }
+  // @ApiOperation({ summary: 'Create a new task' })
+  // @ApiOkResponse({
+  //   description: 'Successfully created a new task',
+  // })
+  // @Post()
+  // createTask(@Body() body: CreateTaskDto, @Req() req: Request): Promise<Task> {
+  //   const userId = req['user']?.id;
+  //   return this.tasksService.create(body, userId);
+  // }
 
   // [PATCH] UPDATE TASK BY ID
   @ApiOperation({ summary: 'Update a task by ID' })
@@ -71,8 +74,8 @@ export class TasksController {
   })
   @Patch(':id')
   updateTask(
-    @Param('id') id: number,
-    @Body() updatedTask: Partial<Task>,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updatedTask: UpdateTaskDto,
   ): Promise<Task> {
     const taskToUpdate = {
       ...updatedTask,
@@ -81,13 +84,32 @@ export class TasksController {
     return this.tasksService.update(id, taskToUpdate);
   }
 
+  // [PATCH] UPDATE TASK POSITION BY ID
+  @ApiOperation({ summary: 'Update a task position by ID' })
+  @ApiOkResponse({
+    description: 'Successfully updated the task position by ID',
+  })
+  @Patch(':id/position')
+  updateTaskPosition(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updatedTask: UpdateTaskPositionDto,
+  ): Promise<Task> {
+    const taskToUpdate = {
+      ...updatedTask,
+      updatedAt: new Date(),
+    };
+    return this.tasksService.updatePosition(id, taskToUpdate);
+  }
+
   // [DELETE] SOFT DELETE TASK BY ID
   @ApiOperation({ summary: 'Soft delete a task by ID' })
   @ApiOkResponse({
     description: 'Successfully soft deleted the task by ID',
   })
   @Delete(':id')
-  deleteTask(@Param('id') id: number): Promise<{ message: string }> {
+  deleteTask(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<{ message: string }> {
     return this.tasksService.delete(id);
   }
 }

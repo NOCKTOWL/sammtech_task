@@ -1,19 +1,12 @@
-import {
-  IsDateString,
-  IsEnum,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { PartialType } from '@nestjs/swagger';
+import { IsDateString, IsEnum, IsNumber, IsString } from 'class-validator';
 import { Priority } from 'src/generated/prisma/client';
+import { CreateTaskDto } from './createTask.dto';
 
-export class CreateTaskDto {
+export class UpdateTaskDto extends PartialType(CreateTaskDto) {
   @IsString()
-  @IsNotEmpty()
   title!: string;
   @IsString()
-  @IsOptional()
   description?: string;
   @IsEnum(Priority)
   priority!: Priority;
@@ -21,7 +14,4 @@ export class CreateTaskDto {
   dueDate!: Date;
   @IsNumber()
   assignedId!: number;
-  // @IsNumber()
-  // @IsOptional()
-  // position?: number | null;
 }

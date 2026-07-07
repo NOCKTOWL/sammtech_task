@@ -125,17 +125,17 @@ export class BoardsService {
     return updatedBoardRecord;
   }
 
-  async delete(id: string): Promise<string> {
+  async delete(id: number): Promise<string> {
     console.log('Deleting board with ID:', id);
     const board = await this.prisma.board.findUnique({
-      where: { id: Number(id) },
+      where: { id },
     });
     if (!board) {
       throw new NotFoundException(`Board with ID ${id} not found`);
     }
 
     await this.prisma.board.update({
-      where: { id: Number(id) },
+      where: { id },
       data: { deletedAt: new Date() },
     });
 
