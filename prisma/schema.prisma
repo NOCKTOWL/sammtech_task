@@ -1,0 +1,94 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  BOARD_OWNER
+}
+
+model User {
+  id        Int      @id @unique @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  createdTasks Task[] @relation("TaskCreator")
+  assignedTasks Task[] @relation("TaskAssignee")
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+model Task {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String?
+  priority    Priority
+  dueDate     DateTime?
+  assignedId  Int?
+  columnId    Int
+  position    Int
+  deletedAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt DateTime @updatedAt
+
+  createdById  Int
+  creator      User     @relation("TaskCreator", fields: [createdById], references: [id])
+  assignedTo   User?    @relation("TaskAssignee", fields: [assignedId], references: [id])
+
+  labels TaskLabel[]
+
+  columns Column @relation(fields: [columnId], references: [id])
+}
+
+model Board {
+  id        Int       @id @default(autoincrement())
+  title     String
+  ownerId   Int
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  columns Column[]
+}
+
+model Column {
+  id        Int      @id @default(autoincrement())
+  title     String
+  order     Int
+  boardId   Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  board Board  @relation(fields: [boardId], references: [id])
+  tasks Task[]
+}
+
+model TaskLabel {
+  id        Int      @id @default(autoincrement())
+  name      String
+  color     String
+  taskId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  task Task @relation(fields: [taskId], references: [id])
+}

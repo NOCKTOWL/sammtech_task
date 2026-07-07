@@ -1,20 +1,24 @@
-/* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { TasksService } from './tasks/tasks.service';
-import { TasksController } from './tasks/tasks.controller';
 import { BoardsModule } from './boards/boards.module';
-import { BoardsService } from './boards/boards.service';
-import { BoardsController } from './boards/boards.controller';
 import { ColumnsModule } from './columns/columns.module';
 import { UsersModule } from './users/users.module';
-import { UsersController } from './users/users.controller';
-import { UsersService } from './users/users.service';
+import { ExceptionController } from './exception/exception.controller';
+import { ConfigModule } from '@nestjs/config';
+import { TasksModule } from './tasks/tasks.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [BoardsModule, ColumnsModule, UsersModule],
-  controllers: [AppController, UsersController, TasksController, BoardsController],
-  providers: [AppService, TasksService, BoardsService, UsersService],
+  imports: [
+    BoardsModule,
+    ColumnsModule,
+    UsersModule,
+    ConfigModule.forRoot({ isGlobal: true }),
+    TasksModule,
+    AuthModule,
+  ],
+  controllers: [AppController, ExceptionController],
+  providers: [AppService],
 })
 export class AppModule {}

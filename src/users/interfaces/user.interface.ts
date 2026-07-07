@@ -1,8 +1,5 @@
-/* eslint-disable prettier/prettier */
 export interface User {
-    id: string;
-    name: string;
-    email: string;
-    password: string;
-    createdAt: Date;
+  id: number;
+  name: string;
+  email: string;
 }

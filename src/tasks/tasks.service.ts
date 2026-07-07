@@ -1,81 +1,98 @@
-/* eslint-disable prettier/prettier */
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from 'src/prisma.service';
+import { Task } from './interfaces/task.interface';
+import { CreateTaskDto } from './dto/createTask.dto';
 
 @Injectable()
 export class TasksService {
-    private tasks = [
-        { id: 1, title: 'Task 1', description: 'This is the first task', priority: 'high', dueDate: '2026-07-01', assignedId: 1, columnId: 1, position: 1, deletedAt: null, createdAt: new Date(), updatedAt: new Date() },
-        { id: 2, title: 'Task 2', description: 'This is the second task', priority: 'medium', dueDate: '2026-07-02', assignedId: 2, columnId: 2, position: 2, deletedAt: null, createdAt: new Date(), updatedAt: new Date() },
-        { id: 3, title: 'Task 3', description: 'This is the third task', priority: 'low', dueDate: '2026-07-03', assignedId: 3, columnId: 3, position: 3, deletedAt: null, createdAt: new Date(), updatedAt: new Date() }
-    ];
+  constructor(private prisma: PrismaService) {}
 
-    getAllTasks() {
-        return this.tasks;
+  // private tasks = [
+  //     { id: 1, title: 'Task 1', description: 'This is the first task', priority: 'high', dueDate: '2026-07-01', assignedId: 1, columnId: 1, position: 1, deletedAt: null, createdAt: new Date(), updatedAt: new Date() },
+  //     { id: 2, title: 'Task 2', description: 'This is the second task', priority: 'medium', dueDate: '2026-07-02', assignedId: 2, columnId: 2, position: 2, deletedAt: null, createdAt: new Date(), updatedAt: new Date() },
+  //     { id: 3, title: 'Task 3', description: 'This is the third task', priority: 'low', dueDate: '2026-07-03', assignedId: 3, columnId: 3, position: 3, deletedAt: null, createdAt: new Date(), updatedAt: new Date() }
+  // ];
+
+  // [GET] GET ALL TASKS
+  async findAll(): Promise<Task[]> {
+    return this.prisma.task.findMany();
+  }
+
+  // for real world scenario maybe deleted tasks won't be fetched
+  // async findAll(): Promise<Task[]> {
+  //   return this.prisma.task.findMany({
+  //     where: {
+  //       deletedAt: null,
+  //     },
+  //   });
+  // }
+
+  // [GET] GET TASK BY ID
+  async findOne(id: number): Promise<Task> {
+    const task = await this.prisma.task.findUnique({
+      where: { id },
+    });
+
+    if (!task) {
+      throw new NotFoundException(`Task with ID ${id} not found`);
     }
 
-    getTaskById(id: number) {
-        const task = this.tasks.find(task => task.id === id);
-        
-        if (!task) {
-            throw new NotFoundException(`Task with ID ${id} not found`);
-        }
-        return task;
+    return task;
+  }
+
+  // [POST] CREATE NEW TASK
+  async create(taskData: CreateTaskDto, userId: number): Promise<Task> {
+    const newTask = await this.prisma.task.create({
+      data: {
+        ...taskData,
+        createdById: userId,
+        deletedAt: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    });
+    return newTask;
+  }
+
+  // [PUT] UPDATE EXISTING TASK
+  async update(id: number, updatedTask: Partial<Task>): Promise<Task> {
+    const task = await this.prisma.task.findUnique({
+      where: { id },
+    });
+
+    if (!task) {
+      throw new NotFoundException(`Task with ID ${id} not found`);
     }
 
-    // [POST] CREATE NEW TASK
-    createTask(task: { title: string; description: string; priority: string; dueDate: string; assignedId: number ; columnId: number; position: number }) {
-        const newTask = {
-            id: this.tasks.length + 1,
-            deletedAt: null,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            ...task
-        };
-        this.tasks.push(newTask);
-        return newTask;
+    const updatedTaskData = {
+      ...task,
+      ...updatedTask,
+      updatedAt: new Date(),
+    };
+
+    const updatedTaskRecord = await this.prisma.task.update({
+      where: { id },
+      data: updatedTaskData,
+    });
+
+    return updatedTaskRecord;
+  }
+
+  // [DELETE] SOFT DELETE TASK BY ID
+  async delete(id: number): Promise<{ message: string }> {
+    const task = await this.prisma.task.findUnique({
+      where: { id },
+    });
+
+    if (!task || task.deletedAt) {
+      throw new NotFoundException(`Task with ID ${id} not found`);
     }
 
-    // [PUT] UPDATE EXISTING TASK
-    updateTask(id: number, updatedTask: {title?: string; description?: string; priority?: string; dueDate?: string; assignedId?: number ; columnId?: number; position?: number }) {
-        const taskIndex = this.tasks.findIndex(task => task.id === id);
+    await this.prisma.task.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+    });
 
-        if (taskIndex === -1) {
-            throw new NotFoundException(`Task with ID ${id} not found`);
-        }
-        
-        this.tasks[taskIndex] = {
-            ...this.tasks[taskIndex],
-            ...updatedTask,
-            updatedAt: new Date()
-        };
-
-        return this.tasks[taskIndex];
-        
-    }
-
-    // [PATCH] PARTIALLY UPDATE TASK
-    partiallyUpdateTask(id: number, updatedFields: Partial<{title?: string; description?: string; priority?: string; dueDate?: string; assignedId?: number ; columnId?: number; position?: number }>) {
-        const task = this.getTaskById(id);
-
-        if (!task) {
-            throw new NotFoundException(`Task with ID ${id} not found`);
-        }
-
-        Object.assign(task, updatedFields, { updatedAt: new Date() });
-
-        return task;
-    }
-
-    // [DELETE] DELETE TASK
-    deleteTask(id: number) {
-        const taskIndex = this.tasks.findIndex(task => task.id === id);
-
-        if (taskIndex === -1) {
-            throw new NotFoundException(`Task with ID ${id} not found`);
-        }
-
-        const deletedTask = this.tasks[taskIndex];
-        this.tasks.splice(taskIndex, 1);
-        return { message: `Task with ID ${id} has been deleted`, task: deletedTask };
-    }
+    return { message: `Task with ID ${id} has been deleted` };
+  }
 }

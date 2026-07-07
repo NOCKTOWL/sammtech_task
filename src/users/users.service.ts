@@ -1,27 +1,21 @@
-/* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { User } from './interfaces/user.interface';
-import { CreateUserDto } from './dto/create-user.dto';
+import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
 export class UsersService {
-    private users: User[] = [];
+  constructor(private prisma: PrismaService) {}
+  // private users: User[] = [];
 
-    getAllUsers(): User[] {
-        return this.users;
-    }
+  getAllUsers(): Promise<User[]> {
+    return this.prisma.user.findMany();
+  }
 
-    getUserById(id: number): User | undefined {
-        return this.users.find(user => user.id === id.toString());
-    }
-
-    createUser(createUserDto: CreateUserDto): User {
-        const newUser: User = {
-            id: (this.users.length + 1).toString(),
-            ...createUserDto,
-            createdAt: new Date(),
-        };
-        this.users.push(newUser);
-        return newUser;
-    }
+  getUserById(id: number): Promise<User | null> {
+    return this.prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+  }
 }
