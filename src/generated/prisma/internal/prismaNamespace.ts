@@ -387,8 +387,7 @@ export const ModelName = {
   User: 'User',
   Task: 'Task',
   Board: 'Board',
-  Column: 'Column',
-  TaskLabel: 'TaskLabel'
+  Column: 'Column'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -404,7 +403,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "task" | "board" | "column" | "taskLabel"
+    modelProps: "user" | "task" | "board" | "column"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -704,80 +703,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    TaskLabel: {
-      payload: Prisma.$TaskLabelPayload<ExtArgs>
-      fields: Prisma.TaskLabelFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.TaskLabelFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskLabelPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.TaskLabelFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskLabelPayload>
-        }
-        findFirst: {
-          args: Prisma.TaskLabelFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskLabelPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.TaskLabelFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskLabelPayload>
-        }
-        findMany: {
-          args: Prisma.TaskLabelFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskLabelPayload>[]
-        }
-        create: {
-          args: Prisma.TaskLabelCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskLabelPayload>
-        }
-        createMany: {
-          args: Prisma.TaskLabelCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.TaskLabelCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskLabelPayload>[]
-        }
-        delete: {
-          args: Prisma.TaskLabelDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskLabelPayload>
-        }
-        update: {
-          args: Prisma.TaskLabelUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskLabelPayload>
-        }
-        deleteMany: {
-          args: Prisma.TaskLabelDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.TaskLabelUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.TaskLabelUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskLabelPayload>[]
-        }
-        upsert: {
-          args: Prisma.TaskLabelUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TaskLabelPayload>
-        }
-        aggregate: {
-          args: Prisma.TaskLabelAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateTaskLabel>
-        }
-        groupBy: {
-          args: Prisma.TaskLabelGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.TaskLabelGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.TaskLabelCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.TaskLabelCountAggregateOutputType> | number
-        }
-      }
-    }
   }
 } & {
   other: {
@@ -824,7 +749,8 @@ export const UserScalarFieldEnum = {
   password: 'password',
   role: 'role',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  refreshToken: 'refreshToken'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -865,23 +791,12 @@ export const ColumnScalarFieldEnum = {
   title: 'title',
   order: 'order',
   boardId: 'boardId',
+  deletedAt: 'deletedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type ColumnScalarFieldEnum = (typeof ColumnScalarFieldEnum)[keyof typeof ColumnScalarFieldEnum]
-
-
-export const TaskLabelScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  color: 'color',
-  taskId: 'taskId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type TaskLabelScalarFieldEnum = (typeof TaskLabelScalarFieldEnum)[keyof typeof TaskLabelScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1111,7 +1026,6 @@ export type GlobalOmitConfig = {
   task?: Prisma.TaskOmit
   board?: Prisma.BoardOmit
   column?: Prisma.ColumnOmit
-  taskLabel?: Prisma.TaskLabelOmit
 }
 
 /* Types for Logging */

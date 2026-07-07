@@ -1,7 +1,7 @@
 import { PartialType } from '@nestjs/swagger';
 import { IsDateString, IsEnum, IsNumber, IsString } from 'class-validator';
 import { Priority } from 'src/generated/prisma/client';
-import { CreateTaskDto } from './createTask.dto';
+import { CreateTaskDto } from './create-task.dto';
 
 export class UpdateTaskDto extends PartialType(CreateTaskDto) {
   @IsString()

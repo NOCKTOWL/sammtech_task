@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Body,
   Controller,
@@ -10,24 +6,21 @@ import {
   Param,
   ParseIntPipe,
   Patch,
-  Post,
-  Put,
-  Req,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { AuthGuard } from 'src/guards/auth/auth.guard';
-import { CreateTaskDto } from './dto/createTask.dto';
 import { Task } from './interfaces/task.interface';
-import type { Request } from 'express';
 import {
   ApiOkResponse,
   ApiOperation,
   ApiBearerAuth,
   ApiForbiddenResponse,
 } from '@nestjs/swagger';
-import { UpdateTaskPositionDto } from './dto/updateTaskPosition.dto';
-import { UpdateTaskDto } from './dto/updateTask.dto';
+import { UpdateTaskPositionDto } from './dto/update-task-position.dto';
+import { UpdateTaskDto } from './dto/update-task.dto';
+import { FilterTasksDto } from './dto/filter-tasks.dto';
 
 @UseGuards(AuthGuard)
 @ApiBearerAuth()
@@ -42,8 +35,8 @@ export class TasksController {
     description: 'Successfully retrieved all tasks',
   })
   @Get()
-  getAllTasks(): Promise<Task[]> {
-    return this.tasksService.findAll();
+  getAllTasks(@Query() filters: FilterTasksDto): Promise<Task[]> {
+    return this.tasksService.findAll(filters);
   }
 
   // [GET] GET TASK BY ID
@@ -55,17 +48,6 @@ export class TasksController {
   getTaskById(@Param('id') id: number): Promise<Task> {
     return this.tasksService.findOne(id);
   }
-
-  // [POST] CREATE NEW TASK
-  // @ApiOperation({ summary: 'Create a new task' })
-  // @ApiOkResponse({
-  //   description: 'Successfully created a new task',
-  // })
-  // @Post()
-  // createTask(@Body() body: CreateTaskDto, @Req() req: Request): Promise<Task> {
-  //   const userId = req['user']?.id;
-  //   return this.tasksService.create(body, userId);
-  // }
 
   // [PATCH] UPDATE TASK BY ID
   @ApiOperation({ summary: 'Update a task by ID' })

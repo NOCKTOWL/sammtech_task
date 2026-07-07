@@ -27,6 +27,8 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  refreshToken String?
+
   createdTasks Task[] @relation("TaskCreator")
   assignedTasks Task[] @relation("TaskAssignee")
 }
@@ -54,9 +56,11 @@ model Task {
   creator      User     @relation("TaskCreator", fields: [createdById], references: [id])
   assignee   User?    @relation("TaskAssignee", fields: [assignedId], references: [id])
 
-  labels TaskLabel[]
-
   columns Column @relation(fields: [columnId], references: [id])
+
+  @@index([columnId])
+  @@index([createdById])
+  @@index([assignedId])
 }
 
 model Board {
@@ -68,6 +72,8 @@ model Board {
   updatedAt DateTime  @updatedAt
 
   columns Column[]
+
+  @@index([ownerId])
 }
 
 model Column {
@@ -75,20 +81,12 @@ model Column {
   title     String
   order     Int
   boardId   Int
+  deletedAt DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   board Board  @relation(fields: [boardId], references: [id])
   tasks Task[]
-}
 
-model TaskLabel {
-  id        Int      @id @default(autoincrement())
-  name      String
-  color     String
-  taskId    Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  task Task @relation(fields: [taskId], references: [id])
+  @@index([boardId])
 }

@@ -42,9 +42,10 @@ export class BoardsService {
   // [GET] GET BOARD BY ID
   async findOne(id: number): Promise<Board> {
     const board = await this.prisma.board.findUnique({
-      where: { id },
+      where: { id, deletedAt: null },
       include: {
         columns: {
+          where: { deletedAt: null },
           orderBy: {
             order: 'asc',
           },
@@ -66,6 +67,7 @@ export class BoardsService {
     return board;
   }
 
+  // [GET] GET ALL BOARDS BY OWNER ID
   async getAllBoardsByOwnerId(ownerId: number): Promise<Board[]> {
     return this.prisma.board.findMany({
       where: { ownerId, deletedAt: null },
@@ -75,7 +77,7 @@ export class BoardsService {
   async getBoardOwnerIdFromRequest(@Req() req: Request): Promise<number> {
     const boardId = req.params.id;
     if (!boardId) {
-      throw new Error('Board ID not found in request');
+      throw new NotFoundException('Board ID not found in request');
     }
     const board = await this.findOne(Number(boardId));
     return board?.ownerId;

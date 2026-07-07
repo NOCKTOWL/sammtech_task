@@ -1,8 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { Task } from './interfaces/task.interface';
-import { UpdateTaskPositionDto } from './dto/updateTaskPosition.dto';
-import { UpdateTaskDto } from './dto/updateTask.dto';
+import { UpdateTaskPositionDto } from './dto/update-task-position.dto';
+import { UpdateTaskDto } from './dto/update-task.dto';
+import { FilterTasksDto } from './dto/filter-tasks.dto';
 
 @Injectable()
 export class TasksService {
@@ -15,8 +16,25 @@ export class TasksService {
   // ];
 
   // [GET] GET ALL TASKS
-  async findAll(): Promise<Task[]> {
-    return this.prisma.task.findMany();
+  async findAll(filters: FilterTasksDto): Promise<Task[]> {
+    const { title, priority, dueDate } = filters;
+
+    return this.prisma.task.findMany({
+      where: {
+        deletedAt: null,
+        ...(title && { title: { contains: title, mode: 'insensitive' } }),
+        ...(priority && { priority }),
+        ...(dueDate && {
+          dueDate: {
+            gte: dueDate ? new Date(`${dueDate}T00:00:00.000Z`) : undefined,
+            lte: dueDate ? new Date(`${dueDate}T23:59:59.999Z`) : undefined,
+          },
+        }),
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
   }
 
   // for real world scenario maybe deleted tasks won't be fetched
@@ -40,20 +58,6 @@ export class TasksService {
 
     return task;
   }
-
-  // [POST] CREATE NEW TASK
-  // async create(taskData: CreateTaskDto, userId: number): Promise<Task> {
-  //   const newTask = await this.prisma.task.create({
-  //     data: {
-  //       ...taskData,
-  //       createdById: userId,
-  //       deletedAt: null,
-  //       createdAt: new Date(),
-  //       updatedAt: new Date(),
-  //     },
-  //   });
-  //   return newTask;
-  // }
 
   // [PATCH] UPDATE EXISTING TASK
   async update(id: number, updatedTask: UpdateTaskDto): Promise<Task> {

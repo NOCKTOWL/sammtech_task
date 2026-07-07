@@ -37,8 +37,3 @@ export type Board = Prisma.BoardModel
  * 
  */
 export type Column = Prisma.ColumnModel
-/**
- * Model TaskLabel
- * 
- */
-export type TaskLabel = Prisma.TaskLabelModel

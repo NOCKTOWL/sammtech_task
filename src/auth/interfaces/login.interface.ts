@@ -1,5 +1,6 @@
 export interface LoggedInUser {
   name: string;
   email: string;
-  token: string;
+  accessToken: string;
+  refreshToken: string;
 }

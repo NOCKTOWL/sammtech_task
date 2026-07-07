@@ -3,6 +3,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Param,
   ParseIntPipe,
   Patch,
@@ -19,7 +20,7 @@ import {
 } from '@nestjs/swagger';
 import { ColumnsService } from './columns.service';
 import { AuthGuard } from 'src/guards/auth/auth.guard';
-import { CreateTaskDto } from 'src/tasks/dto/createTask.dto';
+import { CreateTaskDto } from 'src/tasks/dto/create-task.dto';
 
 @UseGuards(AuthGuard)
 @ApiBearerAuth()
@@ -51,5 +52,17 @@ export class ColumnsController {
     return this.columnsService
       .update(columnId, body)
       .then(() => 'Column updated successfully');
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Soft delete a column by ID' })
+  @ApiParam({ name: 'id', description: 'Column ID' })
+  @ApiOkResponse({ description: 'Column soft deleted successfully' })
+  softDeleteColumn(
+    @Param('id', ParseIntPipe) columnId: number,
+  ): Promise<string> {
+    return this.columnsService
+      .delete(columnId)
+      .then(() => 'Column soft deleted successfully');
   }
 }

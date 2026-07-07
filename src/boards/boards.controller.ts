@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import {
@@ -41,11 +42,12 @@ export class BoardsController {
   constructor(private readonly boardsService: BoardsService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Get all boards' })
+  @ApiOperation({ summary: 'Get all boards of the authenticated user' })
   @ApiOkResponse({ description: 'Boards returned successfully' })
   @Roles(Role.BOARD_OWNER, Role.USER)
-  getAllBoards(): Promise<Board[]> {
-    return this.boardsService.findAll();
+  getAllBoards(@Req() req: Request): Promise<Board[]> {
+    const userId: number = req['user']?.id;
+    return this.boardsService.getAllBoardsByOwnerId(userId);
   }
 
   @Get(':id')

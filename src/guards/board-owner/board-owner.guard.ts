@@ -18,7 +18,7 @@ export class BoardOwnerGuard implements CanActivate {
     const userId = Number(request['user']?.id);
 
     if (!userId) {
-      throw new Error('User ID not found in request');
+      throw new NotFoundException('User ID not found in request');
     }
 
     const boardOwnerId =

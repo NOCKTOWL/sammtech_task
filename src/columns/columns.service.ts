@@ -1,7 +1,10 @@
-/* eslint-disable prettier/prettier */
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { CreateTaskDto } from 'src/tasks/dto/createTask.dto';
+import { CreateTaskDto } from 'src/tasks/dto/create-task.dto';
 
 @Injectable()
 export class ColumnsService {
@@ -11,6 +14,7 @@ export class ColumnsService {
   //   return ['Column 1', 'Column 2', 'Column 3'].join(', ');
   // }
 
+  // [POST] CREATE TASK IN COLUMN
   async createTaskInColumn(
     columnId: number,
     taskData: CreateTaskDto,
@@ -21,7 +25,7 @@ export class ColumnsService {
     });
 
     if (!column) {
-      throw new Error(`Column with ID ${columnId} not found`);
+      throw new NotFoundException(`Column with ID ${columnId} not found`);
     }
 
     const existingTaskCount = await this.prisma.task.count({
@@ -43,12 +47,13 @@ export class ColumnsService {
     return `Task '${newTask.title}' created in column '${column.title}'`;
   }
 
+  // [PATCH] UPDATE COLUMN
   async update(
     columnId: number,
     body: Partial<{ title: string; order: number }>,
   ): Promise<string> {
     if (!body.title && body.order === undefined) {
-      throw new Error(
+      throw new BadRequestException(
         'At least one of title or order must be provided for update',
       );
     }
@@ -71,5 +76,23 @@ export class ColumnsService {
       data: { ...body, updatedAt: new Date() },
     });
     return 'Column updated successfully';
+  }
+
+  // [DELETE] SOFT DELETE COLUMN
+  async delete(columnId: number): Promise<string> {
+    const column = await this.prisma.column.findUnique({
+      where: { id: columnId },
+    });
+
+    if (!column) {
+      throw new NotFoundException(`Column with ID ${columnId} not found`);
+    }
+
+    await this.prisma.column.update({
+      where: { id: columnId },
+      data: { deletedAt: new Date() },
+    });
+
+    return 'Column deleted successfully';
   }
 }

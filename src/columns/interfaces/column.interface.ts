@@ -3,6 +3,7 @@ export interface Column {
   title: string;
   ownerId: number;
   order: number;
+  deletedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }

@@ -43,6 +43,7 @@ export type ColumnMinAggregateOutputType = {
   title: string | null
   order: number | null
   boardId: number | null
+  deletedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -52,6 +53,7 @@ export type ColumnMaxAggregateOutputType = {
   title: string | null
   order: number | null
   boardId: number | null
+  deletedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -61,6 +63,7 @@ export type ColumnCountAggregateOutputType = {
   title: number
   order: number
   boardId: number
+  deletedAt: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -84,6 +87,7 @@ export type ColumnMinAggregateInputType = {
   title?: true
   order?: true
   boardId?: true
+  deletedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -93,6 +97,7 @@ export type ColumnMaxAggregateInputType = {
   title?: true
   order?: true
   boardId?: true
+  deletedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -102,6 +107,7 @@ export type ColumnCountAggregateInputType = {
   title?: true
   order?: true
   boardId?: true
+  deletedAt?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -198,6 +204,7 @@ export type ColumnGroupByOutputType = {
   title: string
   order: number
   boardId: number
+  deletedAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: ColumnCountAggregateOutputType | null
@@ -230,6 +237,7 @@ export type ColumnWhereInput = {
   title?: Prisma.StringFilter<"Column"> | string
   order?: Prisma.IntFilter<"Column"> | number
   boardId?: Prisma.IntFilter<"Column"> | number
+  deletedAt?: Prisma.DateTimeNullableFilter<"Column"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Column"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Column"> | Date | string
   board?: Prisma.XOR<Prisma.BoardScalarRelationFilter, Prisma.BoardWhereInput>
@@ -241,6 +249,7 @@ export type ColumnOrderByWithRelationInput = {
   title?: Prisma.SortOrder
   order?: Prisma.SortOrder
   boardId?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   board?: Prisma.BoardOrderByWithRelationInput
@@ -255,6 +264,7 @@ export type ColumnWhereUniqueInput = Prisma.AtLeast<{
   title?: Prisma.StringFilter<"Column"> | string
   order?: Prisma.IntFilter<"Column"> | number
   boardId?: Prisma.IntFilter<"Column"> | number
+  deletedAt?: Prisma.DateTimeNullableFilter<"Column"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Column"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Column"> | Date | string
   board?: Prisma.XOR<Prisma.BoardScalarRelationFilter, Prisma.BoardWhereInput>
@@ -266,6 +276,7 @@ export type ColumnOrderByWithAggregationInput = {
   title?: Prisma.SortOrder
   order?: Prisma.SortOrder
   boardId?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.ColumnCountOrderByAggregateInput
@@ -283,6 +294,7 @@ export type ColumnScalarWhereWithAggregatesInput = {
   title?: Prisma.StringWithAggregatesFilter<"Column"> | string
   order?: Prisma.IntWithAggregatesFilter<"Column"> | number
   boardId?: Prisma.IntWithAggregatesFilter<"Column"> | number
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Column"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Column"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Column"> | Date | string
 }
@@ -290,6 +302,7 @@ export type ColumnScalarWhereWithAggregatesInput = {
 export type ColumnCreateInput = {
   title: string
   order: number
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   board: Prisma.BoardCreateNestedOneWithoutColumnsInput
@@ -301,6 +314,7 @@ export type ColumnUncheckedCreateInput = {
   title: string
   order: number
   boardId: number
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutColumnsInput
@@ -309,6 +323,7 @@ export type ColumnUncheckedCreateInput = {
 export type ColumnUpdateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   board?: Prisma.BoardUpdateOneRequiredWithoutColumnsNestedInput
@@ -320,6 +335,7 @@ export type ColumnUncheckedUpdateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
   boardId?: Prisma.IntFieldUpdateOperationsInput | number
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutColumnsNestedInput
@@ -330,6 +346,7 @@ export type ColumnCreateManyInput = {
   title: string
   order: number
   boardId: number
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -337,6 +354,7 @@ export type ColumnCreateManyInput = {
 export type ColumnUpdateManyMutationInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -346,6 +364,7 @@ export type ColumnUncheckedUpdateManyInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
   boardId?: Prisma.IntFieldUpdateOperationsInput | number
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -370,6 +389,7 @@ export type ColumnCountOrderByAggregateInput = {
   title?: Prisma.SortOrder
   order?: Prisma.SortOrder
   boardId?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -385,6 +405,7 @@ export type ColumnMaxOrderByAggregateInput = {
   title?: Prisma.SortOrder
   order?: Prisma.SortOrder
   boardId?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -394,6 +415,7 @@ export type ColumnMinOrderByAggregateInput = {
   title?: Prisma.SortOrder
   order?: Prisma.SortOrder
   boardId?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -463,6 +485,7 @@ export type ColumnUncheckedUpdateManyWithoutBoardNestedInput = {
 export type ColumnCreateWithoutTasksInput = {
   title: string
   order: number
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   board: Prisma.BoardCreateNestedOneWithoutColumnsInput
@@ -473,6 +496,7 @@ export type ColumnUncheckedCreateWithoutTasksInput = {
   title: string
   order: number
   boardId: number
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -496,6 +520,7 @@ export type ColumnUpdateToOneWithWhereWithoutTasksInput = {
 export type ColumnUpdateWithoutTasksInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   board?: Prisma.BoardUpdateOneRequiredWithoutColumnsNestedInput
@@ -506,6 +531,7 @@ export type ColumnUncheckedUpdateWithoutTasksInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
   boardId?: Prisma.IntFieldUpdateOperationsInput | number
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -513,6 +539,7 @@ export type ColumnUncheckedUpdateWithoutTasksInput = {
 export type ColumnCreateWithoutBoardInput = {
   title: string
   order: number
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   tasks?: Prisma.TaskCreateNestedManyWithoutColumnsInput
@@ -522,6 +549,7 @@ export type ColumnUncheckedCreateWithoutBoardInput = {
   id?: number
   title: string
   order: number
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutColumnsInput
@@ -561,6 +589,7 @@ export type ColumnScalarWhereInput = {
   title?: Prisma.StringFilter<"Column"> | string
   order?: Prisma.IntFilter<"Column"> | number
   boardId?: Prisma.IntFilter<"Column"> | number
+  deletedAt?: Prisma.DateTimeNullableFilter<"Column"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Column"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Column"> | Date | string
 }
@@ -569,6 +598,7 @@ export type ColumnCreateManyBoardInput = {
   id?: number
   title: string
   order: number
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -576,6 +606,7 @@ export type ColumnCreateManyBoardInput = {
 export type ColumnUpdateWithoutBoardInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tasks?: Prisma.TaskUpdateManyWithoutColumnsNestedInput
@@ -585,6 +616,7 @@ export type ColumnUncheckedUpdateWithoutBoardInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutColumnsNestedInput
@@ -594,6 +626,7 @@ export type ColumnUncheckedUpdateManyWithoutBoardInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -634,6 +667,7 @@ export type ColumnSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   title?: boolean
   order?: boolean
   boardId?: boolean
+  deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   board?: boolean | Prisma.BoardDefaultArgs<ExtArgs>
@@ -646,6 +680,7 @@ export type ColumnSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   title?: boolean
   order?: boolean
   boardId?: boolean
+  deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   board?: boolean | Prisma.BoardDefaultArgs<ExtArgs>
@@ -656,6 +691,7 @@ export type ColumnSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   title?: boolean
   order?: boolean
   boardId?: boolean
+  deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   board?: boolean | Prisma.BoardDefaultArgs<ExtArgs>
@@ -666,11 +702,12 @@ export type ColumnSelectScalar = {
   title?: boolean
   order?: boolean
   boardId?: boolean
+  deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ColumnOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "order" | "boardId" | "createdAt" | "updatedAt", ExtArgs["result"]["column"]>
+export type ColumnOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "order" | "boardId" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["column"]>
 export type ColumnInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   board?: boolean | Prisma.BoardDefaultArgs<ExtArgs>
   tasks?: boolean | Prisma.Column$tasksArgs<ExtArgs>
@@ -694,6 +731,7 @@ export type $ColumnPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     title: string
     order: number
     boardId: number
+    deletedAt: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["column"]>
@@ -1125,6 +1163,7 @@ export interface ColumnFieldRefs {
   readonly title: Prisma.FieldRef<"Column", 'String'>
   readonly order: Prisma.FieldRef<"Column", 'Int'>
   readonly boardId: Prisma.FieldRef<"Column", 'Int'>
+  readonly deletedAt: Prisma.FieldRef<"Column", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Column", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Column", 'DateTime'>
 }

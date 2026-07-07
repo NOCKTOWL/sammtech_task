@@ -36,4 +36,13 @@ export class AuthController {
   async loginUser(@Body() loginUserDto: LoginUserDto): Promise<LoggedInUser> {
     return this.authService.loginUser(loginUserDto);
   }
+
+  @ApiOperation({ summary: 'Refresh JWT token' })
+  @ApiResponse({ status: 200, description: 'Token refreshed successfully' })
+  @Post('refresh-token')
+  refreshToken(
+    @Body('refreshToken') refreshToken: string,
+  ): Promise<LoggedInUser> {
+    return this.authService.refreshToken(refreshToken);
+  }
 }

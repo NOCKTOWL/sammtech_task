@@ -34,9 +34,7 @@ export class AuthService {
       throw new BadRequestException('User with this email already exists');
     }
 
-    registerUserDto.password = await this.encryptPassword(
-      registerUserDto.password,
-    );
+    registerUserDto.password = await this.hashData(registerUserDto.password);
 
     console.log('Registering user:', registerUserDto);
     const user = await this.prisma.user.create({
@@ -57,7 +55,7 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new UnauthorizedException('User not found');
+      throw new UnauthorizedException('Invalid email or password');
     }
 
     const isPasswordValid = await bcrypt.compare(
@@ -66,19 +64,10 @@ export class AuthService {
     );
 
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid password');
+      throw new UnauthorizedException('Invalid email or password');
     }
 
-    const hasMatchedPassword = await this.decryptPassword(
-      loginUserDto.password,
-      user.password,
-    );
-
-    if (!hasMatchedPassword) {
-      throw new UnauthorizedException('Invalid password');
-    }
-
-    const token = await this.JwtService.signAsync(
+    const accessToken = await this.JwtService.signAsync(
       { id: user.id, email: user.email, role: user.role },
       {
         secret: this.configService.get<string>('JWT_SECRET'),
@@ -86,24 +75,98 @@ export class AuthService {
       },
     );
 
+    const refreshToken = await this.JwtService.signAsync(
+      { id: user.id, email: user.email, role: user.role },
+      {
+        secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+        expiresIn: '7d',
+      },
+    );
+
+    await this.updateRefreshToken(user.id, refreshToken);
+
     return {
       name: user.name,
       email: user.email,
-      token: token,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
     };
   }
 
-  async encryptPassword(
-    password: string,
-    saltRounds: number = 10,
-  ): Promise<any> {
-    return await bcrypt.hash(password, saltRounds);
+  async hashData(data: string, saltRounds: number = 10): Promise<any> {
+    return await bcrypt.hash(data, saltRounds);
   }
 
-  async decryptPassword(
-    password: string,
-    hashedPassword: string,
-  ): Promise<any> {
-    return await bcrypt.compare(password, hashedPassword);
+  async updateRefreshToken(
+    userId: number,
+    refreshToken: string,
+  ): Promise<void> {
+    const hashedRefreshToken = await this.hashData(refreshToken);
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { refreshToken: hashedRefreshToken },
+    });
+  }
+
+  async refreshToken(refreshToken: string): Promise<LoggedInUser> {
+    if (!refreshToken) {
+      throw new UnauthorizedException('Refresh token is required');
+    }
+
+    let payload: {
+      id: number;
+      email: string;
+      role: string;
+    };
+
+    try {
+      payload = await this.JwtService.verifyAsync(refreshToken, {
+        secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+      });
+    } catch {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: payload.id },
+    });
+
+    if (!user || !user.refreshToken) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    const refreshTokenMatches = await bcrypt.compare(
+      refreshToken,
+      user.refreshToken,
+    );
+
+    if (!refreshTokenMatches) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    const accessToken = await this.JwtService.signAsync(
+      { id: user.id, email: user.email, role: user.role },
+      {
+        secret: this.configService.get<string>('JWT_SECRET'),
+        expiresIn: '1h',
+      },
+    );
+
+    const newRefreshToken = await this.JwtService.signAsync(
+      { id: user.id, email: user.email, role: user.role },
+      {
+        secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+        expiresIn: '7d',
+      },
+    );
+
+    await this.updateRefreshToken(user.id, newRefreshToken);
+
+    return {
+      name: user.name,
+      email: user.email,
+      accessToken: accessToken,
+      refreshToken: newRefreshToken,
+    };
   }
 }
