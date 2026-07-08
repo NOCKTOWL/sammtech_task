@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import {
   Body,
   Controller,
@@ -7,6 +9,7 @@ import {
   ParseIntPipe,
   Patch,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
@@ -21,6 +24,7 @@ import {
 import { UpdateTaskPositionDto } from './dto/update-task-position.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { FilterTasksDto } from './dto/filter-tasks.dto';
+import type { Request } from 'express';
 
 @UseGuards(AuthGuard)
 @ApiBearerAuth()
@@ -45,8 +49,8 @@ export class TasksController {
     description: 'Successfully retrieved the task by ID',
   })
   @Get(':id')
-  getTaskById(@Param('id') id: number): Promise<Task> {
-    return this.tasksService.findOne(id);
+  getTaskById(@Param('id') id: number, @Req() req: Request): Promise<Task> {
+    return this.tasksService.findOne(id, req['user']?.id);
   }
 
   // [PATCH] UPDATE TASK BY ID

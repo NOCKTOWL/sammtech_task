@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import type { Task } from '../generated/prisma/client';
 import { UpdateTaskPositionDto } from './dto/update-task-position.dto';
@@ -47,13 +51,23 @@ export class TasksService {
   // }
 
   // [GET] GET TASK BY ID
-  async findOne(id: number): Promise<Task> {
+  async findOne(id: number, userId: number): Promise<Task> {
     const task = await this.prisma.task.findUnique({
       where: { id },
     });
 
     if (!task) {
       throw new NotFoundException(`Task with ID ${id} not found`);
+    }
+
+    console.log('task.assignedId:', task.assignedId);
+    console.log('task.createdById:', task.createdById);
+    console.log('userId:', userId);
+
+    if (task.assignedId !== userId && task.createdById !== userId) {
+      throw new UnauthorizedException(
+        `You are not authorized to access this task`,
+      );
     }
 
     return task;
