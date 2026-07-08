@@ -196,6 +196,7 @@ Important fields include:
 id
 name
 email
+refreshToken
 password
 createdAt
 updatedAt
@@ -309,10 +310,10 @@ Validate credentials
 Compare password hash
    │
    ▼
-Generate JWT
+Generate JWT and Refresh Token
    │
    ▼
-Return access token
+Return access token and refresh token
 ```
 
 The client includes the token in protected requests:
@@ -411,7 +412,7 @@ deletedAt = current timestamp
 Active-resource queries exclude records where:
 
 ```text
-deletedAt IS NOT NULL
+deletedAt IS NULL
 ```
 
 ---
@@ -748,7 +749,7 @@ https://sammtech-backend.onrender.com/api
 
 ### NestJS over Express
 
-I have been eyeing NestJS for quite a long time but never used it extensively except fiddling with it a few times. So I thought this is a great chance for me to do a project using it and check out what's all the good things about.
+I have been eyeing NestJS for quite a long time but never used it extensively except fiddling with it a few times. So I thought this is a great chance for me to do a project using it and check out what all the good things are about. Also, this was preferred in the pdf doc.
 
 Although the whole project coule be done using Express, but the nature of NestJS forcing devs to stay inside architectural boundaries and making errors more explicit, reduces the likelihood of mixing routing, authentication, and database logic.
 
@@ -761,7 +762,7 @@ createdById → who created the task
 assignedId  → who is responsible for the task
 ```
 
-This avoids ambiguity and supports tasks created by one user for another. Although it was a bit for me too.
+This avoids ambiguity and supports tasks created by one user for another.
 
 ### Task Repositioning and Column Ordering
 
@@ -837,8 +838,6 @@ I solved this by treating each column as an ordered list. A cross-column move cl
 
 With more time, the next improvements would be:
 
-- complete and extensively test cross-column task movement and reordering;
-- add refresh-token rotation;
 - add task activity logs;
 - record who created, moved, updated, assigned, and deleted tasks;
 - add file attachments using cloud object storage;
