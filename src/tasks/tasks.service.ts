@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { Task } from './interfaces/task.interface';
+import type { Task } from '../generated/prisma/client';
 import { UpdateTaskPositionDto } from './dto/update-task-position.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { FilterTasksDto } from './dto/filter-tasks.dto';
@@ -83,48 +83,151 @@ export class TasksService {
     return updatedTaskRecord;
   }
 
+  // [PATCH] UPDATE TASK POSITION
   async updatePosition(
     id: number,
     updatedTask: UpdateTaskPositionDto,
   ): Promise<Task> {
-    const task = await this.prisma.task.findUnique({
-      where: { id },
-    });
+    return this.prisma.$transaction(async (tx) => {
+      const task = await tx.task.findUnique({
+        where: { id }, // didnt use deletedAt cause I wanted to allow moving deleted tasks to another column as its soft deleted, but not ideal for real world case
+      });
 
-    if (!task) {
-      throw new NotFoundException(`Task with ID ${id} not found`);
-    }
+      if (!task) {
+        throw new NotFoundException(`Task with ID ${id} not found`);
+      }
 
-    const existingTaskInPosition = await this.prisma.task.findFirst({
-      where: {
-        position: updatedTask.position,
-        columnId: task.columnId,
-      },
-    });
+      const targetColumn = await tx.column.findUnique({
+        where: { id: updatedTask.columnId },
+      });
 
-    if (existingTaskInPosition && existingTaskInPosition.id !== id) {
-      await this.prisma.task.update({
-        where: { id: existingTaskInPosition.id },
+      if (!targetColumn) {
+        throw new NotFoundException(
+          `Column with ID ${updatedTask.columnId} not found`,
+        );
+      }
+
+      const sourceColumnId = task.columnId;
+      const targetColumnId = updatedTask.columnId;
+      const oldPosition = task.position;
+
+      const isSameColumn = sourceColumnId === targetColumnId;
+
+      const targetTaskCount = await tx.task.count({
+        where: { columnId: updatedTask.columnId },
+      });
+
+      const newPosition = Math.min(
+        Math.max(updatedTask.position, 0),
+        targetTaskCount,
+      );
+
+      if (isSameColumn && newPosition === oldPosition) {
+        return task;
+      }
+
+      if (isSameColumn) {
+        if (newPosition < oldPosition) {
+          await tx.task.updateMany({
+            where: {
+              columnId: sourceColumnId,
+              position: {
+                gte: newPosition,
+                lt: oldPosition,
+              },
+            },
+            data: {
+              position: {
+                increment: 1,
+              },
+            },
+          });
+        } else {
+          await tx.task.updateMany({
+            where: {
+              columnId: sourceColumnId,
+              position: {
+                gt: oldPosition,
+                lte: newPosition,
+              },
+            },
+            data: {
+              position: {
+                decrement: 1,
+              },
+            },
+          });
+        }
+      } else {
+        await tx.task.updateMany({
+          where: {
+            columnId: sourceColumnId,
+            position: {
+              gt: oldPosition,
+            },
+          },
+          data: {
+            position: {
+              decrement: 1,
+            },
+          },
+        });
+
+        await tx.task.updateMany({
+          where: {
+            columnId: targetColumnId,
+            position: {
+              gte: newPosition,
+            },
+          },
+          data: {
+            position: {
+              increment: 1,
+            },
+          },
+        });
+      }
+      return tx.task.update({
+        where: { id },
         data: {
-          position: existingTaskInPosition.position + 1,
+          columnId: updatedTask.columnId,
+          position: newPosition,
           updatedAt: new Date(),
         },
       });
-    }
-
-    const updatedTaskData = {
-      ...task,
-      ...updatedTask,
-      updatedAt: new Date(),
-    };
-
-    const updatedTaskRecord = await this.prisma.task.update({
-      where: { id },
-      data: updatedTaskData,
     });
-
-    return updatedTaskRecord;
   }
+
+  // const existingTaskInPosition = await this.prisma.task.findFirst({
+  //   where: {
+  //     position: updatedTask.position,
+  //     columnId: task.columnId,
+  //   },
+  // });
+
+  // if (existingTaskInPosition && existingTaskInPosition.id !== id) {
+  //   await this.prisma.task.update({
+  //     where: { id: existingTaskInPosition.id },
+  //     data: {
+  //       position: existingTaskInPosition.position + 1,
+  //       updatedAt: new Date(),
+  //     },
+  //   });
+  // }
+
+  // const updatedTaskData = {
+  //   ...task,
+  //   ...updatedTask,
+  //   updatedAt: new Date(),
+  // };
+
+  // const updatedTaskRecord = await this.prisma.task.update({
+  //   where: { id },
+  //   data: updatedTaskData,
+  // });
+
+  // return updatedTaskRecord;
+  // }
 
   // [DELETE] SOFT DELETE TASK BY ID
   async delete(id: number): Promise<{ message: string }> {

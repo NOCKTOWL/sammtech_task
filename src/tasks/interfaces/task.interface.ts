@@ -2,6 +2,7 @@ import { Priority } from 'src/generated/prisma/client';
 
 export interface Task {
   id: number;
+  title: string;
   createdById: number;
   description: string | null;
   priority: Priority;

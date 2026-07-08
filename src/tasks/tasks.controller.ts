@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { AuthGuard } from 'src/guards/auth/auth.guard';
-import { Task } from './interfaces/task.interface';
+import type { Task } from '../generated/prisma/client';
 import {
   ApiOkResponse,
   ApiOperation,
@@ -76,11 +76,11 @@ export class TasksController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updatedTask: UpdateTaskPositionDto,
   ): Promise<Task> {
-    const taskToUpdate = {
-      ...updatedTask,
-      updatedAt: new Date(),
-    };
-    return this.tasksService.updatePosition(id, taskToUpdate);
+    // const taskToUpdate = {
+    //   ...updatedTask,
+    //   updatedAt: new Date(),
+    // };
+    return this.tasksService.updatePosition(id, updatedTask);
   }
 
   // [DELETE] SOFT DELETE TASK BY ID
