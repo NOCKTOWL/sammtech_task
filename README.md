@@ -843,7 +843,7 @@ With more time, the next improvements would be:
 - add file attachments using cloud object storage;
 - add pagination for task and user lists;
 
-I think the first priority would be the bonus features I missed due to my personal time limitations. I think the time given was enough for this but I, personally had like 3 days to do the whole thing while being new to this.
+I think the first priority would be the bonus features I missed due to my personal time limitations. There are some clear role-based access things that could be improved for example one user shouldn't have access to READ, PATCH or DELETE another user's data. Users route is now accessible by all users if authenticated which should be restricted and be accessible only for admin or maybe HR. I think the time given was enough for this but I, personally had like 3 days to do the whole thing while being new to this.
 
 ---
 

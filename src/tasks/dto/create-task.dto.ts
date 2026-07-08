@@ -21,7 +21,4 @@ export class CreateTaskDto {
   dueDate!: Date;
   @IsNumber()
   assignedId!: number;
-  // @IsNumber()
-  // @IsOptional()
-  // position?: number | null;
 }

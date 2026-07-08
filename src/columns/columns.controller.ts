@@ -29,6 +29,7 @@ import { CreateTaskDto } from 'src/tasks/dto/create-task.dto';
 export class ColumnsController {
   constructor(private readonly columnsService: ColumnsService) {}
 
+  // [POST] CREATE TASK IN COLUMN
   @Post(':id/tasks')
   @ApiOperation({ summary: 'Create a task in a column' })
   @ApiParam({ name: 'id', description: 'Column ID' })
@@ -41,6 +42,7 @@ export class ColumnsController {
     return this.columnsService.createTaskInColumn(columnId, taskData, userId);
   }
 
+  // [PATCH] UPDATE COLUMN BY ID
   @Patch(':id')
   @ApiOperation({ summary: 'Update a column by ID' })
   @ApiParam({ name: 'id', description: 'Column ID' })
@@ -54,6 +56,7 @@ export class ColumnsController {
       .then(() => 'Column updated successfully');
   }
 
+  // [DELETE] SOFT DELETE COLUMN BY ID
   @Delete(':id')
   @ApiOperation({ summary: 'Soft delete a column by ID' })
   @ApiParam({ name: 'id', description: 'Column ID' })

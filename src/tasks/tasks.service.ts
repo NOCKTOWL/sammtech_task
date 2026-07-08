@@ -198,37 +198,6 @@ export class TasksService {
     });
   }
 
-  // const existingTaskInPosition = await this.prisma.task.findFirst({
-  //   where: {
-  //     position: updatedTask.position,
-  //     columnId: task.columnId,
-  //   },
-  // });
-
-  // if (existingTaskInPosition && existingTaskInPosition.id !== id) {
-  //   await this.prisma.task.update({
-  //     where: { id: existingTaskInPosition.id },
-  //     data: {
-  //       position: existingTaskInPosition.position + 1,
-  //       updatedAt: new Date(),
-  //     },
-  //   });
-  // }
-
-  // const updatedTaskData = {
-  //   ...task,
-  //   ...updatedTask,
-  //   updatedAt: new Date(),
-  // };
-
-  // const updatedTaskRecord = await this.prisma.task.update({
-  //   where: { id },
-  //   data: updatedTaskData,
-  // });
-
-  // return updatedTaskRecord;
-  // }
-
   // [DELETE] SOFT DELETE TASK BY ID
   async delete(id: number): Promise<{ message: string }> {
     const task = await this.prisma.task.findUnique({

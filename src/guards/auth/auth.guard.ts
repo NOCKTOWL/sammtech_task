@@ -5,15 +5,9 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-// import * as jwt from 'jsonwebtoken';
 import { Request } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-
-// type decodedToken = {
-//   id: number;
-//   role?: string;
-// };
 
 @Injectable()
 export class AuthGuard implements CanActivate {

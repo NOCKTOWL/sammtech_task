@@ -41,6 +41,7 @@ import { CreateColumnDto } from './dto/createColumn.dto';
 export class BoardsController {
   constructor(private readonly boardsService: BoardsService) {}
 
+  // [GET] GET ALL BOARDS OF AUTHENTICATED USER
   @Get()
   @ApiOperation({ summary: 'Get all boards of the authenticated user' })
   @ApiOkResponse({ description: 'Boards returned successfully' })
@@ -50,6 +51,7 @@ export class BoardsController {
     return this.boardsService.getAllBoardsByOwnerId(userId);
   }
 
+  // [GET] GET BOARD BY ID
   @Get(':id')
   @ApiOperation({ summary: 'Get a board by ID' })
   @ApiParam({ name: 'id', description: 'Board ID' })
@@ -61,6 +63,7 @@ export class BoardsController {
     return this.boardsService.findOne(id);
   }
 
+  // [POST] CREATE BOARD
   @Post()
   @ApiOperation({ summary: 'Create a new board' })
   @ApiCreatedResponse({ description: 'Board created successfully' })
@@ -73,6 +76,7 @@ export class BoardsController {
     return this.boardsService.create(createBoardDto, req['user']?.id);
   }
 
+  // [DELETE] DELETE BOARD BY ID
   @UseGuards(RolesGuard, BoardOwnerGuard)
   @ApiOperation({ summary: 'Delete a board by ID' })
   @ApiParam({ name: 'id', description: 'Board ID' })
@@ -84,6 +88,7 @@ export class BoardsController {
     return this.boardsService.delete(id);
   }
 
+  // [POST] CREATE COLUMN INSIDE A BOARD
   @UseGuards(RolesGuard, BoardOwnerGuard)
   @ApiOperation({ summary: 'Create a column inside a board' })
   @ApiParam({ name: 'id', description: 'Board ID' })
